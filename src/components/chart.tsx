@@ -17,11 +17,7 @@ const ChartDiv = styled('div')(({ theme }) => ({
 
 const ChartComponent = ({ data, options }: Props) => (
   <ChartDiv>
-    <Line
-      height={400}
-      data={data}
-      options={options}
-    />
+    <Line height={400} data={data} options={options} />
   </ChartDiv>
 );
 

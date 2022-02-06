@@ -12,6 +12,11 @@ const Account: NextPage<{}> = () => {
   const router = useRouter();
   const { slug } = router.query;
   const [data, setData] = useState<any>(undefined);
+  const [data2, setData2] = useState<any>({
+    balance: 0,
+    return: 0,
+    dates: { first: 0, last: 0 },
+  });
 
   const optionsRef = useRef({
     plugins: {
@@ -192,6 +197,7 @@ const Account: NextPage<{}> = () => {
       const result = JSON.parse(text);
 
       const { balances, changes, dates, data } = result;
+      setData2(data);
       const labels = dates.map((item) => new Date(item));
 
       const changes2: number[] = [];
@@ -253,10 +259,29 @@ const Account: NextPage<{}> = () => {
     loadData();
   }, [slug]);
 
+  const { balance, dates, profit } = data2;
+  const { first, last } = dates;
+
   return (
     <main>
       <div>
-        {data && <ChartComponent data={data} options={optionsRef.current} />}
+        {data && (
+          <>
+            <ChartComponent data={data} options={optionsRef.current} />
+            <Typography>{`Balance: ${balance}`}</Typography>
+            <Typography>{`Profit: ${(profit * 100).toFixed(2)}%`}</Typography>
+            {first && (
+              <Typography>{`First: ${new Date(
+                first
+              ).toISOString()}`}</Typography>
+            )}
+            {last && (
+              <Typography>{`First: ${new Date(
+                last
+              ).toISOString()}`}</Typography>
+            )}
+          </>
+        )}
         {!data && (
           <Typography variant={'h6'} align={'center'}>
             Loading
