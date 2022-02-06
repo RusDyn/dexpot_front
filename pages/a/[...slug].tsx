@@ -2,14 +2,16 @@ import { NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { useRouter } from 'next/router';
-import Chart from '../../src/components/chart';
 import { Typography } from '@mui/material';
+import { Chart, LineElement } from 'chart.js';
+Chart.register(LineElement);
+
+import ChartComponent from '../../src/components/chart';
 
 const Account: NextPage<{}> = () => {
-
-  const router = useRouter()
-  const { slug } = router.query
-  const [data, setData] = useState(undefined);
+  const router = useRouter();
+  const { slug } = router.query;
+  const [data, setData] = useState<any>(undefined);
 
   const optionsRef = useRef({
     plugins: {
@@ -143,33 +145,126 @@ const Account: NextPage<{}> = () => {
           color: 'rgba(54, 162, 235, 1)',
         },
       },
+      x: {
+        type: 'time',
+        time: {
+          stepSize: 1,
+          unit: 'day',
+          tooltipFormat: 'MM/dd/yyyy',
+        },
+        ticks: {
+          display: true,
+          callback: function (value) {
+            return value;
+            /*
+            return intl.formatDate(parse(value, 'MMM dd', new Date()), {
+              month: 'short',
+              day: 'numeric',
+            });*/
+          },
+          autoSkip: true,
+          maxTicksLimit: 12,
+        },
+      },
     },
   });
+
+  const maxChartItems = 600;
+
+  const filterChartForMaxItems = (items: any[]) => {
+    const len = items.length;
+
+    if (items.length > maxChartItems) {
+      const eachNth = Math.ceil(len / maxChartItems);
+      items = items.filter(
+        (item, index) => index == 0 || index == len - 1 || index % eachNth == 0
+      );
+    }
+    return items;
+  };
 
   const loadData = async () => {
     const id = (slug || [])[0];
     if (id) {
-      const fullUrl = API_URL + '/history/' + id;
+      const fullUrl = `${API_URL}/history/${id}`;
       const res = await fetch(fullUrl, {});
       const text = await res.text();
-      const data = JSON.parse(text);
-      console.log(data)
+      const result = JSON.parse(text);
+
+      const { balances, changes, dates, data } = result;
+      const labels = dates.map((item) => new Date(item));
+
+      const changes2: number[] = [];
+      if (changes.length > 0) {
+        let lastY = 0;
+        changes2.push(0);
+
+        for (let i = 1; i < changes.length; i++) {
+          const y = changes[i];
+          lastY = (1 + lastY) * (1 + y) - 1;
+          changes2.push(lastY * 100);
+        }
+      }
+
+      const datasets = [
+        {
+          label: 'balance',
+          showLine: true,
+          fill: true,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          yAxisID: 'A',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderWidth: 2,
+          pointBackgroundColor: 'transparent',
+          pointBorderWidth: 1,
+          pointRadius: 0,
+          pointHitRadius: 3,
+          pointBorderColor: 'rgba(255, 99, 132, 1)',
+          pointHoverBorderWidth: 2,
+          pointHoverRadius: 5,
+          lineTension: 0.2,
+          data: filterChartForMaxItems(balances),
+          order: 2,
+        },
+        {
+          label: 'return',
+          yAxisID: 'B',
+          borderWidth: 3,
+          order: 1,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0)',
+          type: 'line',
+          pointBackgroundColor: 'transparent',
+          pointBorderWidth: 1,
+          pointHitRadius: 3,
+          pointRadius: 0,
+          pointBorderColor: 'rgba(54, 162, 235, 1)',
+          pointHoverBorderWidth: 2,
+          pointHoverRadius: 5,
+          lineTension: 0.2,
+          data: filterChartForMaxItems(changes2),
+        },
+      ];
+      setData({ labels: filterChartForMaxItems(labels), datasets });
     }
-  }
+  };
 
   useEffect(() => {
-    loadData()
-  }, [slug])
+    loadData();
+  }, [slug]);
 
-
-  return <main>
-    <div>
-      {data && <Chart data={data} options={optionsRef.current} />}
-      {!data && <Typography variant={'h6'} align={'center'}>
-        Loading
-      </Typography>}
-    </div>
-  </main>
+  return (
+    <main>
+      <div>
+        {data && <ChartComponent data={data} options={optionsRef.current} />}
+        {!data && (
+          <Typography variant={'h6'} align={'center'}>
+            Loading
+          </Typography>
+        )}
+      </div>
+    </main>
+  );
 };
 
 export default Account;

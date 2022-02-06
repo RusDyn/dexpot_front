@@ -1,3 +1,5 @@
+import 'chart.js/auto';
+import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
 import { styled } from '@mui/system';
 import React from 'react';
@@ -13,7 +15,7 @@ const ChartDiv = styled('div')(({ theme }) => ({
   },
 }));
 
-const Chart = ({ data, options }: Props) => (
+const ChartComponent = ({ data, options }: Props) => (
   <ChartDiv>
     <Line
       height={400}
@@ -28,4 +30,4 @@ interface Props {
   options;
 }
 
-export default React.memo(Chart);
+export default React.memo(ChartComponent);

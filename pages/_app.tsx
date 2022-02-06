@@ -73,16 +73,15 @@ const MyApp = (props: MyAppProps) => {
         />
       </Head>
       <CacheProvider value={emotionCache}>
-          <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-             <Component {...pageProps} />
-          </ThemeProvider>
+        <ThemeProvider theme={theme}>
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
       </CacheProvider>
     </>
   );
 };
-
 
 MyApp.propTypes = {
   Component: PropTypes.elementType.isRequired,

@@ -4,9 +4,7 @@ interface NavbarProps {}
 
 const Home: NextPage<NavbarProps> = () => (
   <main>
-    <div>
-      123
-    </div>
+    <div>123</div>
   </main>
 );
 
