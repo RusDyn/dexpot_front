@@ -8,6 +8,14 @@ Chart.register(LineElement);
 
 import ChartComponent from '../../src/components/chart';
 
+export const callApi = async (url: string) => {
+  const fullUrl = `${API_URL}/${url}`;
+  const res = await fetch(fullUrl, {});
+  const text = await res.text();
+  const result = JSON.parse(text);
+  return result;
+};
+
 const Account: NextPage<{}> = () => {
   const router = useRouter();
   const { slug } = router.query;
@@ -191,11 +199,7 @@ const Account: NextPage<{}> = () => {
   const loadData = async () => {
     const id = (slug || [])[0];
     if (id) {
-      const fullUrl = `${API_URL}/history/${id}`;
-      const res = await fetch(fullUrl, {});
-      const text = await res.text();
-      const result = JSON.parse(text);
-
+      const result = await callApi(`history/${id}`);
       const { balances, changes, dates, data } = result;
       setData2(data);
       const labels = dates.map((item) => new Date(item));

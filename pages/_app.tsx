@@ -36,7 +36,7 @@ const MyApp = (props: MyAppProps) => {
   return (
     <>
       <Head>
-        <title>Equite | Public portfolio tracker</title>
+        <title>DEXport</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
