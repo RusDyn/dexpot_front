@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { useRouter } from 'next/router';
-import { Typography } from '@mui/material';
+import { AppBar, Link as MuiLink, Toolbar, Typography } from '@mui/material';
 import { Chart, LineElement } from 'chart.js';
 Chart.register(LineElement);
 
@@ -268,6 +268,25 @@ const Account: NextPage<{}> = () => {
 
   return (
     <main>
+      <AppBar position="static">
+        <Toolbar variant="dense">
+          {/*
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          */}
+          <MuiLink href={'/'}>
+            <Typography variant="h6" color="textPrimary" component="div">
+              Home
+            </Typography>
+          </MuiLink>
+        </Toolbar>
+      </AppBar>
       <div>
         {data && (
           <>

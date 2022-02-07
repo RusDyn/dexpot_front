@@ -7,10 +7,14 @@ import {
   Button,
   Input,
   Link as MuiLink,
+  IconButton,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
 import Moralis from 'moralis';
 import { callApi } from './a/[...slug]';
 import Link from 'next/link';
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface NavbarProps {}
 
@@ -30,7 +34,7 @@ const Home: NextPage<NavbarProps> = () => {
     console.log(result);
   };
 
-  const currentUser = Moralis.User.current();
+  const currentUser = showConnect ? Moralis.User.current() : undefined;
   const accounts = currentUser?.attributes?.accounts || [];
 
   const onRandomClick = async () => {
@@ -39,6 +43,9 @@ const Home: NextPage<NavbarProps> = () => {
     window.location.replace(url);
   };
 
+  const onLogout = async () => {
+    Moralis.User.logOut();
+  };
   const initMoralis = async () => {
     await Moralis.start({
       appId: process.env.NEXT_PUBLIC_MORALIS_APP,
@@ -59,6 +66,25 @@ const Home: NextPage<NavbarProps> = () => {
 
   return (
     <main>
+      <AppBar position="static">
+        <Toolbar variant="dense">
+          {/*
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          */}
+          <MuiLink href={'/'}>
+            <Typography variant="h6" color="textPrimary" component="div">
+              Home
+            </Typography>
+          </MuiLink>
+        </Toolbar>
+      </AppBar>
       <Container maxWidth="xl" sx={{ minHeight: '100vh' }}>
         <Typography variant={'h1'} align="center">
           DEXPORT
@@ -157,9 +183,19 @@ const Home: NextPage<NavbarProps> = () => {
               </Grid>
             )}
             {currentUser && (
-              <Typography variant={'caption'} align={'center'}>
-                Wallet connected
-              </Typography>
+              <>
+                <Typography variant={'caption'} align={'center'}>
+                  Wallet connected
+                </Typography>
+                <Button
+                  sx={{ minWidth: 0, padding: '0 10px', marginLeft: 1 }}
+                  size={'small'}
+                  variant={'contained'}
+                  onClick={onLogout}
+                >
+                  X
+                </Button>
+              </>
             )}
             <Grid container item>
               {accounts.map((address) => (
@@ -173,6 +209,11 @@ const Home: NextPage<NavbarProps> = () => {
               ))}
             </Grid>
           </Grid>
+
+          <Grid item xs={12} sx={{ paddingTop: 10 }}>
+            <Typography variant={'h4'}>Analyzed: {count} addresses</Typography>
+            <Typography variant={'h6'}>Last:</Typography>
+          </Grid>
           <Grid item container>
             {lastAddresses.map((address) => (
               <Grid xs={12} item key={address}>
@@ -184,10 +225,6 @@ const Home: NextPage<NavbarProps> = () => {
               </Grid>
             ))}
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant={'h4'}>Analyzed: {count} addresses</Typography>
-          </Grid>
-
           <Grid item></Grid>
           <Grid item></Grid>
         </Grid>
