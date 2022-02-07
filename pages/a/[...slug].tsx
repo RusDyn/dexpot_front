@@ -270,16 +270,6 @@ const Account: NextPage<{}> = () => {
     <main>
       <AppBar position="static">
         <Toolbar variant="dense">
-          {/*
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          */}
           <MuiLink href={'/'}>
             <Typography variant="h6" color="textPrimary" component="div">
               Home

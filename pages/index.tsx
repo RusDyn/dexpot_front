@@ -7,14 +7,14 @@ import {
   Button,
   Input,
   Link as MuiLink,
-  IconButton,
+  //IconButton,
   AppBar,
   Toolbar,
 } from '@mui/material';
 import Moralis from 'moralis';
 import { callApi } from './a/[...slug]';
 import Link from 'next/link';
-import MenuIcon from '@mui/icons-material/Menu';
+//import MenuIcon from '@mui/icons-material/Menu';
 
 interface NavbarProps {}
 
